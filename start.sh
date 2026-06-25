@@ -11,8 +11,10 @@ ls -lah /opt/miner/
 ls -lh /opt/miner/SRBMiner-MULTI
 echo "===== ALGORITHMS ====="
 /opt/miner/SRBMiner-MULTI --list-algorithms
-
-exit 0
+echo "===== TEST ====="
+/opt/miner/SRBMiner-MULTI --help
+echo "EXIT CODE=$?"
+sleep 300
 
 # ---- Banner ----
 echo "$(ts) =============================================="
