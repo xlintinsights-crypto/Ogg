@@ -6,6 +6,10 @@ set -euo pipefail
 
 # ---- Timestamp helper ----
 ts() { date -u '+[%Y-%m-%d %H:%M:%S UTC]'; }
+echo "$(ts) [DEBUG] Checking miner binary..."
+ls -lah /opt/miner/
+file /opt/miner/SRBMiner-MULTI || true
+/opt/miner/SRBMiner-MULTI --help | head -50 || true
 
 # ---- Banner ----
 echo "$(ts) =============================================="
