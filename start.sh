@@ -93,19 +93,12 @@ while true; do
     # --disable-gpu          : explicit CPU-only (no CUDA/OpenCL)
     # --log-level            : verbosity (2 = standard, 3 = verbose)
     set +e
-    /opt/miner/SRBMiner-MULTI \
-        --algorithm oggpow \
-        --pool "${STRATUM_URL}" \
-        --cpu-threads "${CPU_THREADS}" \
-        --disable-gpu \
-        --log-file-disabled \
-        --log-level "${LOG_LEVEL}" \
-        2>&1 | while IFS= read -r line; do
-            echo "$(ts) [MINER] ${line}"
-        done
+/opt/miner/SRBMiner-MULTI --list-algorithms \
+    2>&1 | while IFS= read -r line; do
+        echo "$(ts) [MINER] ${line}"
+    done
     EXIT_CODE=${PIPESTATUS[0]}
-    set -e
-
+set -e
     CRASH_COUNT=$(( CRASH_COUNT + 1 ))
     echo "$(ts) ─────────────────────────────────────────────────"
     echo "$(ts) [WATCHDOG] Miner exited (code: ${EXIT_CODE}) — crash #${CRASH_COUNT}"
