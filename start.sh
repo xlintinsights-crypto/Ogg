@@ -8,8 +8,11 @@ set -euo pipefail
 ts() { date -u '+[%Y-%m-%d %H:%M:%S UTC]'; }
 echo "$(ts) [DEBUG] Checking miner binary..."
 ls -lah /opt/miner/
-file /opt/miner/SRBMiner-MULTI || true
-/opt/miner/SRBMiner-MULTI --help | head -50 || true
+ls -lh /opt/miner/SRBMiner-MULTI
+echo "===== ALGORITHMS ====="
+/opt/miner/SRBMiner-MULTI --list-algorithms
+
+exit 0
 
 # ---- Banner ----
 echo "$(ts) =============================================="
