@@ -101,11 +101,19 @@ while true; do
     # --disable-gpu          : explicit CPU-only (no CUDA/OpenCL)
     # --log-level            : verbosity (2 = standard, 3 = verbose)
     set +e
-/opt/miner/SRBMiner-MULTI --list-algorithms \
+
+/opt/miner/SRBMiner-MULTI \
+    --algorithm oggpow \
+    --pool ${POOL_HOST}:${POOL_PORT} \
+    --wallet ${WALLET_ADDRESS} \
+    --worker ${WORKER_NAME} \
+    --cpu-threads ${CPU_THREADS} \
+    --disable-gpu \
     2>&1 | while IFS= read -r line; do
         echo "$(ts) [MINER] ${line}"
     done
-    EXIT_CODE=${PIPESTATUS[0]}
+
+EXIT_CODE=${PIPESTATUS[0]}
 set -e
     CRASH_COUNT=$(( CRASH_COUNT + 1 ))
     echo "$(ts) ─────────────────────────────────────────────────"
