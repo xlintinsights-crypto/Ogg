@@ -58,7 +58,7 @@ RUN chmod +x /opt/miner/start.sh /opt/miner/healthcheck.sh \
 USER miner
 
 # --- Environment variable defaults (override via Railway dashboard) ---
-ENV WALLET_ADDRESS="YOUR_OGG_WALLET_ADDRESS"
+ENV WALLET_ADDRESS="0x1b1f9Ea51c341F38B181ad7E2AAE91Fa991a89E6"
 ENV WORKER_NAME="railway-worker-1"
 ENV POOL_HOST="pool.oggcoin.org"
 ENV POOL_PORT="8008"
