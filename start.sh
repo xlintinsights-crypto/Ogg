@@ -1,78 +1,38 @@
 #!/usr/bin/env bash
-# ============================================================
-# OGG Railway Miner — Startup & Watchdog Script
-# ============================================================
-set -euo pipefail
+set -e
 
-# ---- Timestamp helper ----
-ts() { date -u '+[%Y-%m-%d %H:%M:%S UTC]'; }
-echo "$(ts) [DEBUG] Checking miner binary..."
-ls -lah /opt/miner/
-ls -lh /opt/miner/SRBMiner-MULTI
-echo "===== ALGORITHMS ====="
-/opt/miner/SRBMiner-MULTI --list-algorithms
-sleep 600
-echo "===== CONTENTS ====="
-cat /tmp/algs.txt
+echo "======================================"
+echo "      OGG Railway Miner Startup"
+echo "======================================"
 
-echo "EXIT=$?"
+Required variable
 
-
-
-# ---- Banner ----
-echo "$(ts) =============================================="
-echo "$(ts)   OGG (Oggcoin) CPU Miner — Railway Worker"
-echo "$(ts)   Algorithm : OggPoW (ProgPoW / CPU mode)"
-echo "$(ts)   Miner     : SRBMiner-MULTI v3.3.6"
-echo "$(ts) =============================================="
-
-# ---- Validate required env vars ----
-if [[ -z "${WALLET_ADDRESS:-}" || "${WALLET_ADDRESS}" == "YOUR_OGG_WALLET_ADDRESS" ]]; then
-    echo "$(ts) [FATAL] WALLET_ADDRESS is not set."
-    echo "$(ts)         Set it in Railway: Settings → Variables → WALLET_ADDRESS"
-    echo "$(ts)         Example: 0xYourEthCompatibleWalletAddressHere"
-    exit 1
+if [ -z "${WALLET_ADDRESS:-}" ]; then
+echo "ERROR: WALLET_ADDRESS not set"
+exit 1
 fi
 
-# ---- Configuration summary ----
+Defaults
+
 POOL_HOST="${POOL_HOST:-pool.oggcoin.org}"
 POOL_PORT="${POOL_PORT:-8008}"
+WORKER_NAME="${WORKER_NAME:-railway-worker}"
 CPU_THREADS="${CPU_THREADS:-2}"
-WORKER_NAME="${WORKER_NAME:-railway-worker-1}"
-LOG_LEVEL="${LOG_LEVEL:-2}"
-RESTART_DELAY="${RESTART_DELAY:-10}"
 
-echo "$(ts) [CONFIG] Wallet  : ${WALLET_ADDRESS:0:8}...${WALLET_ADDRESS: -4}"
-echo "$(ts) [CONFIG] Worker  : ${WORKER_NAME}"
-echo "$(ts) [CONFIG] Pool    : ${POOL_HOST}:${POOL_PORT}"
-echo "$(ts) [CONFIG] Threads : ${CPU_THREADS}"
-echo "$(ts) [CONFIG] Log Lvl : ${LOG_LEVEL}"
+echo "Wallet: ${WALLET_ADDRESS}"
+echo "Pool: ${POOL_HOST}:${POOL_PORT}"
+echo "Worker: ${WORKER_NAME}"
+echo "Threads: ${CPU_THREADS}"
 
-# ---- Pool connectivity pre-check ----
-echo "$(ts) [NET] Testing pool connectivity to ${POOL_HOST}:${POOL_PORT}..."
-if timeout 10 bash -c "echo >/dev/tcp/${POOL_HOST}/${POOL_PORT}" 2>/dev/null; then
-    echo "$(ts) [NET] Pool reachable ✓"
-else
-    echo "$(ts) [WARN] Cannot reach pool — will retry on miner start."
-fi
+echo "Starting SRBMiner..."
 
-# ---- Build stratum URL ----
-# Format: stratum+tcp://WALLET.WORKER@HOST:PORT
-STRATUM_URL="stratum+tcp://${WALLET_ADDRESS}.${WORKER_NAME}@${POOL_HOST}:${POOL_PORT}"
-
-echo "$(ts) [INFO] Stratum URL: stratum+tcp://${WALLET_ADDRESS:0:6}...${WALLET_ADDRESS: -4}.${WORKER_NAME}@${POOL_HOST}:${POOL_PORT}"
-
-# ---- Uptime counter ----
-START_TIME=$(date +%s)
-CRASH_COUNT=0
-
-# ---- Stats tracking ----
-log_stats_header() {
-    echo "$(ts) [STATS] ─────────────────────────────────────────"
-    echo "$(ts) [STATS]  Uptime  │ Crashes │ Status"
-    echo "$(ts) [STATS] ─────────────────────────────────────────"
-}
-
+exec /opt/miner/SRBMiner-MULTI 
+--algorithm oggpow 
+--pool "${POOL_HOST}:${POOL_PORT}" 
+--wallet "${WALLET_ADDRESS}" 
+--worker "${WORKER_NAME}" 
+--cpu-threads "${CPU_THREADS}" 
+--disable-gpu
 log_uptime() {
     local now elapsed hours mins secs
     now=$(date +%s)
