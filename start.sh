@@ -10,14 +10,14 @@ echo "$(ts) [DEBUG] Checking miner binary..."
 ls -lah /opt/miner/
 ls -lh /opt/miner/SRBMiner-MULTI
 echo "===== ALGORITHMS ====="
-/opt/miner/SRBMiner-MULTI --list-algorithms > /tmp/algs.txt 2>&1
-
+/opt/miner/SRBMiner-MULTI --list-algorithms
+sleep 600
 echo "===== CONTENTS ====="
 cat /tmp/algs.txt
 
 echo "EXIT=$?"
 
-sleep 300
+
 
 # ---- Banner ----
 echo "$(ts) =============================================="
