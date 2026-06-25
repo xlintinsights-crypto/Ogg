@@ -48,8 +48,8 @@ RUN wget -q --show-progress \
     && ls -lah
 
 # --- Copy startup & monitoring scripts ---
-COPY scripts/start.sh /opt/miner/start.sh
-COPY scripts/healthcheck.sh /opt/miner/healthcheck.sh
+COPY start.sh /opt/miner/start.sh
+COPY healthcheck.sh /opt/miner/healthcheck.sh
 
 RUN chmod +x /opt/miner/start.sh /opt/miner/healthcheck.sh \
     && chown -R miner:miner /opt/miner
